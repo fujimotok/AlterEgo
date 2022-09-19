@@ -32,8 +32,11 @@
     "zprint-clj": "~0.8.0"
   },
   "dependencies": {
+    "@emotion/react": "11.0.0",
+    "@emotion/styled": "11.0.0",
+    "@mui/material": "5.10.1",
     "create-react-class": "~15.6.3",
-    "react": "~16.8.0",
-    "react-dom": "~16.8.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }

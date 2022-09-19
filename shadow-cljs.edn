@@ -15,7 +15,8 @@
         :output-to "out/e2e.js"
         :target :node-test}}
  :dependencies [[reagent "0.8.1"]
-                [devcards "0.2.6"]]
+                [devcards "0.2.6"]
+                [arttuka/reagent-material-ui "5.10.1-0"]]
  :dev-http {5000 "public"}
  :nrepl {:port 3333}
  :source-paths ["src"]
