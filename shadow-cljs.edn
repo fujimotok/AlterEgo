@@ -16,7 +16,8 @@
         :target :node-test}}
  :dependencies [[reagent "0.8.1"]
                 [devcards "0.2.6"]
-                [arttuka/reagent-material-ui "5.10.1-0"]]
+                [arttuka/reagent-material-ui "5.10.1-0"]
+                [com.github.brianium/indexed.db "1.0.3"]]
  :dev-http {5000 "public"}
  :nrepl {:port 3333}
  :source-paths ["src"]
