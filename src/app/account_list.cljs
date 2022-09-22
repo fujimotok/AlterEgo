@@ -16,9 +16,7 @@
             [reagent-mui.icons.person :refer [person]]
             [reagent-mui.icons.abc :refer [abc]]
             [reagent-mui.icons.edit :refer [edit]]
-            [reagent-mui.icons.delete-icon :refer [delete]])
-  (:require-macros
-     [cljs.core.async.macros :refer [go]]))
+            [reagent-mui.icons.delete-icon :refer [delete]]))
 
 ;; define reagent react component
 (defn account-list [{:keys [items]}]
@@ -40,7 +38,8 @@
         ]]
       [accordion-actions
        [icon-button {:on-click #(item-edit-dialog-open (:id item) (:title item) (:url item) (:name item) (:val item))} [edit]]
-       [icon-button {:on-click #(del-item (:id item))} [delete]]]
+       [icon-button {:on-click (fn [](del-item (:id item))
+                                 (app.store/init-items))} [delete]]]
       ])
    ])
   

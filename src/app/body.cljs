@@ -1,5 +1,7 @@
 (ns app.body
   (:require [reagent.core :as r]
+            ;; my model
+            [app.store :as s]
             ;; my components
             [app.items :refer [get-items]]
             [app.account-list :refer [account-list]]
@@ -11,26 +13,18 @@
             [reagent-mui.material.container :refer [container]]
             [reagent-mui.material.fab :refer [fab]]
             ;; icons
-            [reagent-mui.icons.add :refer [add]])
-  (:require-macros
-   [cljs.core.async.macros :refer [go]]))
-
-(def open (r/atom false))
-(def items (r/atom []))
-
-(defn init-items []
-  (go (reset! items (<! (get-items)))))
+            [reagent-mui.icons.add :refer [add]]))
 
 (defn body []
   (r/create-class
    {:component-did-mount
      (fn [comp]
-      (init-items))
+      (s/init-items))
     :reagent-render
     (fn []
       [:<>
        [app-bar {:position "fixed"} [toolbar "List"]]
-       [container [account-list {:items @items}]]
+       [container [account-list {:items @s/items}]]
        [fab {:variant "contained"
              :on-click #(item-edit-dialog-open)
              :style {:position "fixed" :bottom "20px" :right "20px"}} [add]]

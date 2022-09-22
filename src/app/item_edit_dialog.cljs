@@ -1,5 +1,6 @@
 (ns app.item-edit-dialog
   (:require [reagent.core :as r]
+            [app.store :as s]
             [app.items :refer [put-item]]
             ;; material-ui react components
             [reagent-mui.material.grid :refer [grid]]
@@ -42,13 +43,12 @@
 
 (defn save-item [phrease]
   (.log js/console phrease)
-  (go (put-item @item))
-  (clear-item))
+  (go (put-item @item)
+      (clear-item)))
 
 (defn exec-save []
-  (.log js/console @item)
   (save-item (js/prompt "master phrase"))
-  (clear-item)
+  (s/init-items)
   (reset! open false))
 
 (defn on-change-text [e key]

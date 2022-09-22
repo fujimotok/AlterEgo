@@ -32,10 +32,9 @@
         (db/on "success" (fn [e] (put! success-ch e))))
 
     ;; open実行後の処理待ちブロック作成
-    (go (.log js/console "error: " (<! error-ch))
+    (go (println "error: " (<! error-ch))
         (>! ret-ch nil))
     (go (<! success-ch)
-        (.log js/console "success:")
         (>! ret-ch req))
 
     ;; チャンネル返す。これを外で<!するとこの関数の処理が実行される
@@ -69,10 +68,11 @@
                  :keywordize-keys true))))
   
 (defn put-item [map]
-  (let [ret-ch (chan)]
+  (let [ret-ch (chan)
+        data (if (:id map) map (dissoc map :id))]
     (go (-> (<! (open))
             (get-store)
-            (db/put (clj->js map))
+            (db/put (clj->js data))
             (db/on "success" (fn [res] (put! ret-ch res)))))
     (go (<! ret-ch))))
 
