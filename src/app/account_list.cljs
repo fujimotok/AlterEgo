@@ -1,5 +1,6 @@
 (ns app.account-list
   (:require [reagent.core :as r]
+            [app.items :refer [del-item]]
             [app.item-edit-dialog :refer [item-edit-dialog-open]]
             ;; material-ui react components
             [reagent-mui.material.grid :refer [grid]]
@@ -15,12 +16,13 @@
             [reagent-mui.icons.person :refer [person]]
             [reagent-mui.icons.abc :refer [abc]]
             [reagent-mui.icons.edit :refer [edit]]
-            [reagent-mui.icons.delete-icon :refer [delete]]
-            ))
+            [reagent-mui.icons.delete-icon :refer [delete]])
+  (:require-macros
+     [cljs.core.async.macros :refer [go]]))
 
 ;; define reagent react component
 (defn account-list [{:keys [items]}]
-  [list
+  [list {:style {:margin-top "80px" :margin-bottom "80px"}}
    (for [item items]
      ^{:key (:id item)}
      [accordion 
@@ -38,7 +40,7 @@
         ]]
       [accordion-actions
        [icon-button {:on-click #(item-edit-dialog-open (:id item) (:title item) (:url item) (:name item) (:val item))} [edit]]
-       [icon-button [delete]]]
+       [icon-button {:on-click #(del-item (:id item))} [delete]]]
       ])
    ])
   

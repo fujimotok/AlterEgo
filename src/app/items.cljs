@@ -1,5 +1,9 @@
 (ns app.items
-  (:require [indexed.db :as db]))
+  (:require
+   [indexed.db :as db]
+   [cljs.core.async :as async :refer [<! >! chan put!]])
+  (:require-macros
+   [cljs.core.async.macros :refer [go]]))
 
 (defn handle-upgrade [e]
   (let [store (-> (db/create-version-change-event e)
@@ -12,57 +16,72 @@
     (db/create-index store "name" "name" {:unique? false})
     (db/create-index store "val" "val" {:unique? false})))
 
-(defn put-item [open-req json]
-  (-> (db/result open-req) 
+(defn open
+  "DBを開く処理完了後にセットされるchanを返す"
+  []
+  (let [error-ch (chan)
+        success-ch (chan)
+        ret-ch (chan)
+        req (db/open "AlterEgo" 1)]
+
+    ;; open実行ブロック
+    (-> req
+        (db/on "error" (fn [e] (put! error-ch e)))
+        (db/on "blocked" (fn [e] (put! error-ch e)))
+        (db/on "upgradeneeded" handle-upgrade)
+        (db/on "success" (fn [e] (put! success-ch e))))
+
+    ;; open実行後の処理待ちブロック作成
+    (go (.log js/console "error: " (<! error-ch))
+        (>! ret-ch nil))
+    (go (<! success-ch)
+        (.log js/console "success:")
+        (>! ret-ch req))
+
+    ;; チャンネル返す。これを外で<!するとこの関数の処理が実行される
+    ret-ch))
+
+(defn get-store
+  "DBを開くリクエストオブジェクトを受けてストア（テーブル）を返す"
+  [req]
+  (-> (db/result req) 
       (db/create-database)
       (db/transaction ["items"] "readwrite")
-      (db/object-store "items")
-      (db/put json)
-      (db/on "success" #(.log js/console "success"))
-      (db/on "complete" #(.log js/console "complete"))))
+      (db/object-store "items")))
 
-(defn save-item [json]
-  (let [open-req (db/open "AlterEgo" 1)]
-    (-> open-req
-        (db/on "error" #(.log js/console "error"))
-        (db/on "blocked" #(.log js/console "blocked"))
-        (db/on "upgradeneeded" handle-upgrade)
-        (db/on "success" (fn [](put-item open-req json))))))
+;; 公開
+(defn get-items []
+  (let [ret-ch (chan)]
+    (go (-> (<! (open))
+            (get-store)
+            (db/get-all)
+            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (js->clj (.. (<! ret-ch) -target -result)
+                 :keywordize-keys true))))
+
+(defn get-item [key]
+  (let [ret-ch (chan)]
+    (go (-> (<! (open))
+            (get-store)
+            (db/get key)
+            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (js->clj (.. (<! ret-ch) -target -result)
+                 :keywordize-keys true))))
   
-(defn get-item [open-req key]
-  (-> (db/result open-req) 
-      (db/create-database)
-      (db/transaction ["items"] "readwrite")
-      (db/object-store "items")
-      (db/get key)
-      (db/on "success" (fn [res] (.log js/console res)))
-      (db/on "complete" (fn [res] (.log js/console res)))))
+(defn put-item [map]
+  (let [ret-ch (chan)]
+    (go (-> (<! (open))
+            (get-store)
+            (db/put (clj->js map))
+            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (<! ret-ch))))
 
-(defn load-item [key]
-  (let [open-req (db/open "AlterEgo" 1)]
-    (-> open-req
-        (db/on "error" #(.log js/console "error"))
-        (db/on "blocked" #(.log js/console "blocked"))
-        (db/on "upgradeneeded" handle-upgrade)
-        (db/on "success" (fn [](get-item open-req key))))))
+(defn del-item [key]
+  (let [ret-ch (chan)]
+    (go (-> (<! (open))
+            (get-store)
+            (db/delete key)
+            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (<! ret-ch))))
 
-(defn get-all [open-req]
-  (-> (db/result open-req) 
-      (db/create-database)
-      (db/transaction ["items"] "readwrite")
-      (db/object-store "items")
-      (db/get-all)
-      (db/on "success" (fn [res] (.log js/console res) (.. res -target -result)))
-      (db/on "complete" (fn [res] (.log js/console res)))))
 
-(defn load-all []
-  (let [open-req (db/open "AlterEgo" 1)]
-    (-> open-req
-        (db/on "error" #(.log js/console "error"))
-        (db/on "blocked" #(.log js/console "blocked"))
-        (db/on "upgradeneeded" handle-upgrade)
-        (db/on "success" (fn [](get-all open-req))))))
-
-(save-item #js {:title "test1" :url "http://example.com" :name "Alice" :val "abcde" :id 2})
-(load-item 1)
-(load-all)

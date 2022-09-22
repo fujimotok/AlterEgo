@@ -1,5 +1,6 @@
 (ns app.item-edit-dialog
   (:require [reagent.core :as r]
+            [app.items :refer [put-item]]
             ;; material-ui react components
             [reagent-mui.material.grid :refer [grid]]
             [reagent-mui.material.button :refer [button]]
@@ -13,8 +14,9 @@
             [reagent-mui.icons.link :refer [link]]
             [reagent-mui.icons.person :refer [person]]
             [reagent-mui.icons.abc :refer [abc]]
-            [reagent-mui.icons.save :refer [save]]
-            ))
+            [reagent-mui.icons.save :refer [save]])
+  (:require-macros
+   [cljs.core.async.macros :refer [go]]))
 
 ;; variables
 (def open (r/atom false))
@@ -30,10 +32,18 @@
            :val val})
   (reset! open true))
 
-(defn clear-item [])
+(defn clear-item []
+  (reset! item
+          {:id nil
+           :title nil
+           :url nil
+           :name nil
+           :val nil}))
 
 (defn save-item [phrease]
-  (.log js/console phrease))
+  (.log js/console phrease)
+  (go (put-item @item))
+  (clear-item))
 
 (defn exec-save []
   (.log js/console @item)
