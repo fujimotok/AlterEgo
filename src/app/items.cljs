@@ -1,11 +1,13 @@
 (ns app.items
   (:require
-   [indexed.db :as db]
-   [cljs.core.async :as async :refer [<! >! chan put!]])
+    [cljs.core.async :as async :refer [<! >! chan put!]]
+    [indexed.db :as db])
   (:require-macros
-   [cljs.core.async.macros :refer [go]]))
+    [cljs.core.async.macros :refer [go]]))
 
-(defn handle-upgrade [e]
+
+(defn handle-upgrade
+  [e]
   (let [store (-> (db/create-version-change-event e)
                   (db/get-request)
                   (db/result)
@@ -15,6 +17,7 @@
     (db/create-index store "url" "url" {:unique? false})
     (db/create-index store "name" "name" {:unique? false})
     (db/create-index store "val" "val" {:unique? false})))
+
 
 (defn open
   "DBを開く処理完了後にセットされるchanを返す"
@@ -40,16 +43,19 @@
     ;; チャンネル返す。これを外で<!するとこの関数の処理が実行される
     ret-ch))
 
+
 (defn get-store
   "DBを開くリクエストオブジェクトを受けてストア（テーブル）を返す"
   [req]
-  (-> (db/result req) 
+  (-> (db/result req)
       (db/create-database)
       (db/transaction ["items"] "readwrite")
       (db/object-store "items")))
 
+
 ;; 公開
-(defn get-items []
+(defn get-items
+  []
   (let [ret-ch (chan)]
     (go (-> (<! (open))
             (get-store)
@@ -58,7 +64,9 @@
     (go (js->clj (.. (<! ret-ch) -target -result)
                  :keywordize-keys true))))
 
-(defn get-item [key]
+
+(defn get-item
+  [key]
   (let [ret-ch (chan)]
     (go (-> (<! (open))
             (get-store)
@@ -66,8 +74,10 @@
             (db/on "success" (fn [res] (put! ret-ch res)))))
     (go (js->clj (.. (<! ret-ch) -target -result)
                  :keywordize-keys true))))
-  
-(defn put-item [map]
+
+
+(defn put-item
+  [map]
   (let [ret-ch (chan)
         data (if (:id map) map (dissoc map :id))]
     (go (-> (<! (open))
@@ -76,7 +86,9 @@
             (db/on "success" (fn [res] (put! ret-ch res)))))
     (go (<! ret-ch))))
 
-(defn del-item [key]
+
+(defn del-item
+  [key]
   (let [ret-ch (chan)]
     (go (-> (<! (open))
             (get-store)
