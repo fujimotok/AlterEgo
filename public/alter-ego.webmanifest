@@ -1,0 +1,20 @@
+{
+  "name": "Alter Ego",
+  "short_name": "AlterEgo",
+  "description": "no description",
+  "icons": [
+    {
+      "src": "icons/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "./index.html",
+  "theme_color": "#1876d2",
+  "display": "fullscreen"
+}
