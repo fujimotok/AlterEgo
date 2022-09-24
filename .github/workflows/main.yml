@@ -24,7 +24,6 @@ jobs:
         with:
           distribution: 'temurin' # See 'Supported distributions' for available options
           java-version: '17'
-          cache: 'gradle'
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
