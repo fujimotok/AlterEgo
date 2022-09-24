@@ -6,24 +6,25 @@
     [cljs.core.async.macros :refer [go]]))
 
 
-(defn handle-upgrade
+;;
+;; private
+;;
+
+(defn- handle-upgrade
   [e]
   (let [db (-> (db/create-version-change-event e)
                (db/get-request)
                (db/result)
                (db/create-database))
-        items (db/create-object-store db "items" {:key-path "id" :auto-increment true})
-        items2 (db/create-object-store db "items2" {:key-path "id" :auto-increment true})]
+        items (db/create-object-store db "items" {:key-path "id" :auto-increment true})]
     (db/create-index items "title" "title" {:unique? false})
     (db/create-index items "url" "url" {:unique? false})
     (db/create-index items "name" "name" {:unique? false})
-    (db/create-index items "val" "val" {:unique? false})
-    (db/create-index items2 "val1" "val1" {:unique? false})
-    (db/create-index items2 "val2" "val2" {:unique? false})))
+    (db/create-index items "val" "val" {:unique? false})))
 
 
-(defn open
-  "DBを開く処理完了後にセットされるchanを返す"
+(defn- open
+  "[o] IDBDatabase"
   []
   (let [error-ch (chan)
         success-ch (chan)
@@ -41,29 +42,37 @@
     (go (println "error: " (<! error-ch))
         (>! ret-ch nil))
     (go (<! success-ch)
-        (>! ret-ch req))
+        (>! ret-ch (db/create-database (db/result req))))
 
     ;; チャンネル返す。これを外で<!するとこの関数の処理が実行される
     ret-ch))
 
 
-(defn get-store
-  "DBを開くリクエストオブジェクトを受けてストア（テーブル）を返す"
-  [req]
-  (-> (db/result req)
-      (db/create-database)
+(defn- get-store
+  "
+  [i] IDBDatabase
+  [o] IDBDatastore
+  "
+  [db]
+  (-> db
       (db/transaction ["items"] "readwrite")
       (db/object-store "items")))
 
 
-;; 公開
+;;
+;; Public
+;;
+
 (defn get-items
   []
   (let [ret-ch (chan)]
-    (go (-> (<! (open))
-            (get-store)
-            (db/get-all)
-            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (let [db (<! (open))]
+          (-> (get-store db)
+              (db/get-all)
+              (db/on "success"
+                     (fn [res]
+                       (put! ret-ch res)
+                       (db/close db))))))
     (go (js->clj (.. (<! ret-ch) -target -result)
                  :keywordize-keys true))))
 
@@ -71,10 +80,13 @@
 (defn get-item
   [key]
   (let [ret-ch (chan)]
-    (go (-> (<! (open))
-            (get-store)
-            (db/get key)
-            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (let [db (<! (open))]
+          (-> (get-store db)
+              (db/get key)
+              (db/on "success"
+                     (fn [res]
+                       (put! ret-ch res)
+                       (db/close db))))))
     (go (js->clj (.. (<! ret-ch) -target -result)
                  :keywordize-keys true))))
 
@@ -83,18 +95,24 @@
   [map]
   (let [ret-ch (chan)
         data (if (:id map) map (dissoc map :id))]
-    (go (-> (<! (open))
-            (get-store)
-            (db/put (clj->js data))
-            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (let [db (<! (open))]
+          (-> (get-store db)
+              (db/put (clj->js data))
+              (db/on "success"
+                     (fn [res]
+                       (put! ret-ch res)
+                       (db/close db))))))
     (go (<! ret-ch))))
 
 
 (defn del-item
   [key]
   (let [ret-ch (chan)]
-    (go (-> (<! (open))
-            (get-store)
-            (db/delete key)
-            (db/on "success" (fn [res] (put! ret-ch res)))))
+    (go (let [db (<! (open))]
+          (-> (get-store db)
+              (db/delete key)
+              (db/on "success"
+                     (fn [res]
+                       (put! ret-ch res)
+                       (db/close db))))))
     (go (<! ret-ch))))

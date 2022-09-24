@@ -8,7 +8,7 @@
 ;; Web API async wrapper
 ;;
 
-(defn digest
+(defn- digest
   "
   [i] Uint8Array (val): value to be hashed
   [i] strint (algo): hash algorithm
@@ -25,7 +25,7 @@
     ch))
 
 
-(defn import-key
+(defn- import-key
   "
   [i] ArrayBuffer (key): key data
   [i] string (format): 'raw' 'pkcs8' 'spki' 'jwk'
@@ -48,7 +48,7 @@
     ch))
 
 
-(defn derive-key
+(defn- derive-key
   "
   [i] CryptKey (key): key data
   [i] object (algo): Pdkdf2Param etc...
@@ -71,7 +71,7 @@
     ch))
 
 
-(defn encrypt
+(defn- encrypt
   "
   [i] CryptKey (key): key data
   [i] object (algo): AesGcmParams etc...
@@ -90,7 +90,7 @@
     ch))
 
 
-(defn decrypt
+(defn- decrypt
   "
   [i] CryptKey (key): key data
   [i] object (algo): AesGcmParams etc...
@@ -113,31 +113,31 @@
 ;; Buffer util
 ;;
 
-(defn str-2-Uint8Array
+(defn- str-2-Uint8Array
   [str]
   (.encode (new js/TextEncoder) str))
 
 
-(defn ArrayBuffer-2-str
+(defn- ArrayBuffer-2-str
   [ab]
   (.decode (new js/TextDecoder) (new js/Uint8Array ab)))
 
 
-(defn ArrayBuffer-2-Base64
+(defn- ArrayBuffer-2-Base64
   [ab]
   (-> (map #(char %) (vec (new js/Uint8Array ab)))
       (join)
       (js/btoa)))
 
 
-(defn Base64-2-ArrayBuffer
+(defn- Base64-2-ArrayBuffer
   [str]
   (.from js/Uint8Array
          (.split (js/atob str) "")
          #(.charCodeAt % 0)))
 
 
-(defn gen-key
+(defn- gen-key
   "[o] chan<CryptKey>"
   [v1 v2]
   (let [ch (chan)]
@@ -161,6 +161,10 @@
         (>! ch)))
     ch))
 
+
+;;
+;; Public
+;;
 
 (defn encrypt-text
   "[o] chan<ArrayBuffer>"
@@ -195,5 +199,3 @@
         (>! ch)))
     ch))
 
-
-;; (js/prompt "master phrase")
