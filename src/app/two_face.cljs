@@ -8,6 +8,7 @@
     ;; material-ui react components
     [reagent-mui.material.grid :refer [grid]]
     [reagent-mui.material.icon-button :refer [icon-button]]
+    [reagent-mui.material.typography :refer [typography]]
     [reagent.core :as r])
   (:require-macros
     [cljs.core.async.macros :refer [go]]))
@@ -25,10 +26,10 @@
   (let [visible (r/atom false)
         code (r/atom val)]
     (fn [{:keys [id val]}]
-      [grid {:container true}
+      [grid {:container true :justify-content "space-between" :align-items "center"}
        (if @visible
-         [grid {:item true :xs 11} @code]
-         [grid {:item true :xs 11} val])
+         [grid  [typography {:variant "body1"} @code]]
+         [grid  [typography {:variant "body1"} val]])
        (if @visible
          [grid {:item true :xs 1}
           [icon-button {:on-click #(reset! visible false)} [visibility]]]

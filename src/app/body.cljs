@@ -6,10 +6,13 @@
     [app.store :as s]
     ;; icons
     [reagent-mui.icons.add :refer [add]]
+    [reagent-mui.icons.download :refer [download]]
+    [reagent-mui.icons.upload :refer [upload]]
+    ;; mui components
     [reagent-mui.material.app-bar :refer [app-bar]]
     [reagent-mui.material.container :refer [container]]
     [reagent-mui.material.fab :refer [fab]]
-    ;; mui components
+    [reagent-mui.material.icon-button :refer [icon-button]]
     [reagent-mui.material.toolbar :refer [toolbar]]
     [reagent.core :as r]))
 
@@ -23,7 +26,11 @@
      :reagent-render
      (fn []
        [:<>
-        [app-bar {:position "fixed"} [toolbar "List"]]
+        [app-bar {:position "fixed"}
+         [toolbar
+          [:div {:style {:flex-grow "1"}}]
+          [icon-button {:color "inherit"} [upload]]
+          [icon-button {:color "inherit"} [download]]]]
         [container [account-list {:items @s/items}]]
         [fab {:variant "contained"
               :on-click #(item-edit-dialog-open)

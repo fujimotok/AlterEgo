@@ -16,7 +16,6 @@
     [reagent-mui.material.dialog-content :refer [dialog-content]]
     [reagent-mui.material.dialog-title :refer [dialog-title]]
     ;; material-ui react components
-    [reagent-mui.material.grid :refer [grid]]
     [reagent-mui.material.text-field :refer [text-field]]
     [reagent.core :as r])
   (:require-macros
@@ -74,37 +73,36 @@
 (defn item-edit-dialog
   []
   [dialog
-   {:open @open :onClose #(reset! open false)}
-   [dialog-title "Edit Item"]
+   {:open @open :on-close #(reset! open false) :full-width true}
+   [dialog-title "Input"]
    [dialog-content
-    [grid {:container true :alignItems "center" :spacing 4}
-     [grid {:item true :xs 1} [title]]
-     [grid {:item true :xs 11}
-      [text-field {:variant "standard"
-                   :fullWidth true
-                   :value (:title @item)
-                   :onChange (fn [e] (on-change-text e :title))}]]
-     [grid {:item true :xs 1} [link]]
-     [grid {:item true :xs 11}
-      [text-field {:variant "standard"
-                   :fullWidth true
-                   :type "email"
-                   :value (:url @item)
-                   :onChange (fn [e] (on-change-text e :url))}]]
-     [grid {:item true :xs 1} [person]]
-     [grid {:item true :xs 11}
-      [text-field {:variant "standard"
-                   :fullWidth true
-                   :type "email"
-                   :value (:name @item)
-                   :onChange (fn [e] (on-change-text e :name))}]]
-     [grid {:item true :xs 1} [abc]]
-     [grid {:item true :xs 11}
-      [text-field {:variant "standard"
-                   :fullWidth true
-                   :type "password"
-                   :value (:val @item)
-                   :onChange (fn [e] (on-change-text e :val))}]]]]
+    [:div {:style {:display "flex" :align-items "center"}}
+     [title {:style {:margin "8px 16px 8px 0px"}}]
+     [text-field {:variant "standard"
+                  :fullWidth true
+                  :value (:title @item)
+                  :onChange (fn [e] (on-change-text e :title))}]]
+    [:div {:style {:display "flex" :align-items "center"}}
+     [link {:style {:margin "8px 16px 8px 0px"}}]
+     [text-field {:variant "standard"
+                  :fullWidth true
+                  :type "url"
+                  :value (:url @item)
+                  :onChange (fn [e] (on-change-text e :url))}]]
+    [:div {:style {:display "flex" :align-items "center"}}
+     [person {:style {:margin "8px 16px 8px 0px"}}]
+     [text-field {:variant "standard"
+                  :fullWidth true
+                  :type "url"
+                  :value (:name @item)
+                  :onChange (fn [e] (on-change-text e :name))}]]
+    [:div {:style {:display "flex" :align-items "center"}}
+     [abc {:style {:margin "8px 16px 8px 0px"}}]
+     [text-field {:variant "standard"
+                  :fullWidth true
+                  :type "password"
+                  :value (:val @item)
+                  :onChange (fn [e] (on-change-text e :val))}]]]
    [dialog-actions
     [button {:start-icon (r/as-element [save])
              :variant "contained"
