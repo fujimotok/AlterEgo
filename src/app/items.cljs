@@ -8,15 +8,18 @@
 
 (defn handle-upgrade
   [e]
-  (let [store (-> (db/create-version-change-event e)
-                  (db/get-request)
-                  (db/result)
-                  (db/create-database)
-                  (db/create-object-store "items" {:key-path "id" :auto-increment true}))]
-    (db/create-index store "title" "title" {:unique? false})
-    (db/create-index store "url" "url" {:unique? false})
-    (db/create-index store "name" "name" {:unique? false})
-    (db/create-index store "val" "val" {:unique? false})))
+  (let [db (-> (db/create-version-change-event e)
+               (db/get-request)
+               (db/result)
+               (db/create-database))
+        items (db/create-object-store db "items" {:key-path "id" :auto-increment true})
+        items2 (db/create-object-store db "items2" {:key-path "id" :auto-increment true})]
+    (db/create-index items "title" "title" {:unique? false})
+    (db/create-index items "url" "url" {:unique? false})
+    (db/create-index items "name" "name" {:unique? false})
+    (db/create-index items "val" "val" {:unique? false})
+    (db/create-index items2 "val1" "val1" {:unique? false})
+    (db/create-index items2 "val2" "val2" {:unique? false})))
 
 
 (defn open
@@ -95,5 +98,3 @@
             (db/delete key)
             (db/on "success" (fn [res] (put! ret-ch res)))))
     (go (<! ret-ch))))
-
-
