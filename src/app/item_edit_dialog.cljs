@@ -1,7 +1,9 @@
 (ns app.item-edit-dialog
   (:require
     [app.items :refer [put-item]]
+    [app.sesame :refer [encrypt-text]]
     [app.store :as s]
+    [cljs.core.async :refer [<!]]
     [reagent-mui.icons.abc :refer [abc]]
     [reagent-mui.icons.link :refer [link]]
     [reagent-mui.icons.person :refer [person]]
@@ -28,13 +30,13 @@
 
 ;; functions
 (defn item-edit-dialog-open
-  [& [id title url name val]]
+  [& [id title url name]]
   (reset! item
           {:id id
            :title title
            :url url
            :name name
-           :val val})
+           :val ""})
   (reset! open true))
 
 
@@ -49,16 +51,17 @@
 
 
 (defn save-item
-  [phrease]
-  (.log js/console phrease)
-  (go (put-item @item)
-      (clear-item)))
+  [v1 v2]
+  (go
+    (reset! item (assoc @item :val (<! (encrypt-text v1 v2 (str (:id @item)) (:val @item)))))
+    (<! (put-item @item))
+    (s/init-items)
+    (clear-item)))
 
 
 (defn exec-save
   []
-  (save-item (js/prompt "master phrase"))
-  (s/init-items)
+  (save-item (js/prompt "phrase1") (js/prompt "phrase2"))
   (reset! open false))
 
 
