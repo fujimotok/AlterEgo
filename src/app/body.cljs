@@ -19,6 +19,14 @@
     [reagent.core :as r]))
 
 
+(defn- on-change-input
+  []
+  (go (let [input (.getElementById js/document "input")]
+        (<! (import-items (.. input -files (item 0))))
+        (<! (s/init-items))
+        (js/alert "Import completed"))))
+
+
 (defn body
   []
   (r/create-class
@@ -32,15 +40,16 @@
          [toolbar
           [:div {:style {:flex-grow "1"}}]
           [icon-button {:color "inherit"
-                        :on-click (fn []
-                                    (go
-                                      (<! (import-items))
-                                      (<! (s/init-items))
-                                      (js/alert "Import completed")))}
+                        :on-click #(.click (.getElementById js/document "input"))}
            [upload]]
           [icon-button {:color "inherit" :on-click #(export-items)} [download]]]]
         [container [account-list {:items @s/items}]]
         [fab {:variant "contained"
               :on-click #(item-edit-dialog-open)
               :style {:position "fixed" :bottom "20px" :right "20px"}} [add]]
+        [:input {:id "input"
+                 :type "file"
+                 :accept ".json"
+                 :style {:visibility "hidden" :width 0 :height 0}
+                 :on-change #(on-change-input)}]
         [item-edit-dialog]])}))
