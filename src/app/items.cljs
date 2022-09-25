@@ -127,3 +127,22 @@
       (set! (.-download link) "alter-ego.json")
       (.click link))))
 
+
+(defn import-items
+  []
+  (let [file (chan)
+        json (chan)
+        input (.createElement js/document "input")
+        reader (new js/FileReader)]
+    (set! (.-type input) "file")
+    (set! (.-accept input) "application/json")
+    (set! (.-onchange input) (fn [] (go (>! file (.. input -files (item 0))))))
+
+    (set! (.-onloadend reader) (fn [e] (go (>! json (.parse js/JSON (.. e -target -result))))))
+    (.click input)
+    (go
+      (.readAsText reader (<! file)))
+    (go
+      (let [items (js->clj (<! json))]
+        (doseq [item items]
+          (put-item item))))))

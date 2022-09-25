@@ -2,9 +2,10 @@
   (:require
     [app.account-list :refer [account-list]]
     [app.item-edit-dialog :refer [item-edit-dialog item-edit-dialog-open]]
-    [app.items :refer [export-items]]
+    [app.items :refer [import-items export-items]]
     ;; my model
     [app.store :as s]
+    [cljs.core.async :refer [go <!]]
     ;; icons
     [reagent-mui.icons.add :refer [add]]
     [reagent-mui.icons.download :refer [download]]
@@ -30,7 +31,13 @@
         [app-bar {:position "fixed"}
          [toolbar
           [:div {:style {:flex-grow "1"}}]
-          [icon-button {:color "inherit"} [upload]]
+          [icon-button {:color "inherit"
+                        :on-click (fn []
+                                    (go
+                                      (<! (import-items))
+                                      (<! (s/init-items))
+                                      (js/alert "Import completed")))}
+           [upload]]
           [icon-button {:color "inherit" :on-click #(export-items)} [download]]]]
         [container [account-list {:items @s/items}]]
         [fab {:variant "contained"
