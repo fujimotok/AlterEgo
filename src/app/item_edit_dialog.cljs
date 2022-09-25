@@ -52,6 +52,9 @@
 (defn save-item
   [v1 v2]
   (go
+    (when (not (:id @item))
+      (reset! item (assoc @item :id
+                          (.. (<! (put-item {:title "" :url "" :name "" :val ""})) -target -result))))
     (reset! item (assoc @item :val (<! (encrypt-text v1 v2 (str (:id @item)) (:val @item)))))
     (<! (put-item @item))
     (s/init-items)
