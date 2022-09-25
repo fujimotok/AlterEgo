@@ -2,6 +2,7 @@
   (:require
     [app.account-list :refer [account-list]]
     [app.item-edit-dialog :refer [item-edit-dialog item-edit-dialog-open]]
+    [app.items :refer [export-items]]
     ;; my model
     [app.store :as s]
     ;; icons
@@ -30,7 +31,7 @@
          [toolbar
           [:div {:style {:flex-grow "1"}}]
           [icon-button {:color "inherit"} [upload]]
-          [icon-button {:color "inherit"} [download]]]]
+          [icon-button {:color "inherit" :on-click #(export-items)} [download]]]]
         [container [account-list {:items @s/items}]]
         [fab {:variant "contained"
               :on-click #(item-edit-dialog-open)

@@ -31,20 +31,17 @@
         ret-ch (chan)
         req (db/open "AlterEgo" 1)]
 
-    ;; open実行ブロック
     (-> req
         (db/on "error" (fn [e] (put! error-ch e)))
         (db/on "blocked" (fn [e] (put! error-ch e)))
         (db/on "upgradeneeded" handle-upgrade)
         (db/on "success" (fn [e] (put! success-ch e))))
 
-    ;; open実行後の処理待ちブロック作成
     (go (println "error: " (<! error-ch))
         (>! ret-ch nil))
     (go (<! success-ch)
         (>! ret-ch (db/create-database (db/result req))))
 
-    ;; チャンネル返す。これを外で<!するとこの関数の処理が実行される
     ret-ch))
 
 
@@ -116,3 +113,17 @@
                        (put! ret-ch res)
                        (db/close db))))))
     (go (<! ret-ch))))
+
+
+(defn export-items
+  []
+  (go
+    (let [json (->> (<! (get-items))
+                    (clj->js)
+                    (.stringify js/JSON))
+          blob (new js/Blob [json] #js {:type "application/json"})
+          link (.createElement js/document "a")]
+      (set! (.-href link) (.createObjectURL js/URL blob))
+      (set! (.-download link) "alter-ego.json")
+      (.click link))))
+
