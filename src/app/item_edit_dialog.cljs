@@ -1,9 +1,10 @@
 (ns app.item-edit-dialog
   (:require
     [app.items :refer [put-item]]
+    [app.modal-dialog :refer [modal-dialog]]
     [app.sesame :refer [encrypt-text]]
     [app.store :as s]
-    [cljs.core.async :refer [<!]]
+    [cljs.core.async :refer [<! >! chan]]
     [reagent-mui.icons.abc :refer [abc]]
     [reagent-mui.icons.link :refer [link]]
     [reagent-mui.icons.person :refer [person]]
@@ -62,8 +63,8 @@
 
 
 (defn exec-save
-  []
-  (save-item (js/prompt "phrase1") (js/prompt "phrase2"))
+  [v]
+  (save-item (:v1 v) (:v2 v))
   (reset! open false))
 
 
@@ -75,41 +76,51 @@
 ;; define reagent react component
 (defn item-edit-dialog
   []
-  [dialog
-   {:open @open :on-close #(reset! open false) :full-width true}
-   [dialog-title "Input"]
-   [dialog-content
-    [:div {:style {:display "flex" :align-items "center"}}
-     [title {:style {:margin "8px 16px 8px 0px"}}]
-     [text-field {:variant "standard"
-                  :fullWidth true
-                  :value (:title @item)
-                  :onChange (fn [e] (on-change-text e :title))}]]
-    [:div {:style {:display "flex" :align-items "center"}}
-     [link {:style {:margin "8px 16px 8px 0px"}}]
-     [text-field {:variant "standard"
-                  :fullWidth true
-                  :type "url"
-                  :value (:url @item)
-                  :onChange (fn [e] (on-change-text e :url))}]]
-    [:div {:style {:display "flex" :align-items "center"}}
-     [person {:style {:margin "8px 16px 8px 0px"}}]
-     [text-field {:variant "standard"
-                  :fullWidth true
-                  :type "url"
-                  :value (:name @item)
-                  :onChange (fn [e] (on-change-text e :name))}]]
-    [:div {:style {:display "flex" :align-items "center"}}
-     [abc {:style {:margin "8px 16px 8px 0px"}}]
-     [text-field {:variant "standard"
-                  :fullWidth true
-                  :type "password"
-                  :value (:val @item)
-                  :onChange (fn [e] (on-change-text e :val))}]]]
-   [dialog-actions
-    [button {:start-icon (r/as-element [save])
-             :variant "contained"
-             :on-click #(exec-save)}
-     "save"]]])
+  (let [modal (r/atom false)
+        ch (chan)]
+    (fn []
+      [dialog
+       {:open @open :on-close #(reset! open false) :full-width true}
+       [dialog-title "Input"]
+       [dialog-content
+        [:div {:style {:display "flex" :align-items "center"}}
+         [title {:style {:margin "8px 16px 8px 0px"}}]
+         [text-field {:variant "standard"
+                      :fullWidth true
+                      :value (:title @item)
+                      :onChange (fn [e] (on-change-text e :title))}]]
+        [:div {:style {:display "flex" :align-items "center"}}
+         [link {:style {:margin "8px 16px 8px 0px"}}]
+         [text-field {:variant "standard"
+                      :fullWidth true
+                      :type "url"
+                      :value (:url @item)
+                      :onChange (fn [e] (on-change-text e :url))}]]
+        [:div {:style {:display "flex" :align-items "center"}}
+         [person {:style {:margin "8px 16px 8px 0px"}}]
+         [text-field {:variant "standard"
+                      :fullWidth true
+                      :type "url"
+                      :value (:name @item)
+                      :onChange (fn [e] (on-change-text e :name))}]]
+        [:div {:style {:display "flex" :align-items "center"}}
+         [abc {:style {:margin "8px 16px 8px 0px"}}]
+         [text-field {:variant "standard"
+                      :fullWidth true
+                      :type "password"
+                      :value (:val @item)
+                      :onChange (fn [e] (on-change-text e :val))}]]]
+       [dialog-actions
+        [button {:start-icon (r/as-element [save])
+                 :variant "contained"
+                 :on-click (fn []
+                             (go
+                               (reset! modal true)
+                               (exec-save (<! ch))))}
+         "save"]]
+       [modal-dialog {:open @modal
+                      :on-close (fn [v1 v2]
+                                  (go (reset! modal false)
+                                      (>! ch {:v1 v1 :v2 v2})))}]])))
 
 
