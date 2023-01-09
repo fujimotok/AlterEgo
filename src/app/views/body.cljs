@@ -8,12 +8,15 @@
     ;; icons
     [reagent-mui.icons.add :refer [add]]
     [reagent-mui.icons.download :refer [download]]
+    [reagent-mui.icons.search :refer [search]]
     [reagent-mui.icons.upload :refer [upload]]
     ;; mui components
     [reagent-mui.material.app-bar :refer [app-bar]]
     [reagent-mui.material.container :refer [container]]
     [reagent-mui.material.fab :refer [fab]]
     [reagent-mui.material.icon-button :refer [icon-button]]
+    [reagent-mui.material.input-adornment :refer [input-adornment]]
+    [reagent-mui.material.outlined-input :refer [outlined-input]]
     [reagent-mui.material.toolbar :refer [toolbar]]
     [reagent.core :as r]))
 
@@ -35,9 +38,16 @@
      :reagent-render
      (fn []
        [:<>
-        [app-bar {:position "fixed"}
+        [app-bar {:position "fixed" :color "transparent"}
          [toolbar
-          [:div {:style {:flex-grow "1"}}]
+          [outlined-input {:size "small",
+                           :placeholder "Search...",
+                           :end-adornment
+                           (r/as-element
+                             [input-adornment {:position "end"}
+                              [icon-button {:color "inherit"}
+                               [search]]]),
+                           :style {:flex-grow "1"}}]
           [icon-button {:color "inherit"
                         :on-click #(.click (.getElementById js/document "input"))}
            [upload]]
