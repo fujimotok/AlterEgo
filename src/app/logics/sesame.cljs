@@ -1,4 +1,4 @@
-(ns app.sesame
+(ns app.logics.sesame
   (:require
     [cljs.core.async :refer [go chan <! >!]]
     [clojure.string :refer [join]]))

@@ -1,4 +1,4 @@
-(ns app.items
+(ns app.logics.items
   (:require
     [cljs.core.async :as async :refer [<! >! chan put!]]
     [indexed.db :as db])

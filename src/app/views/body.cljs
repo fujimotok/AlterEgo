@@ -1,10 +1,9 @@
-(ns app.body
+(ns app.views.body
   (:require
-    [app.account-list :refer [account-list]]
-    [app.item-edit-dialog :refer [item-edit-dialog item-edit-dialog-open]]
-    [app.items :refer [import-items export-items]]
-    ;; my model
-    [app.store :as s]
+    [app.logics.items :refer [import-items export-items]]
+    [app.stores.store :as s]
+    [app.views.account-list :refer [account-list]]
+    [app.views.item-edit-dialog :refer [item-edit-dialog item-edit-dialog-open]]
     [cljs.core.async :refer [go <!]]
     ;; icons
     [reagent-mui.icons.add :refer [add]]

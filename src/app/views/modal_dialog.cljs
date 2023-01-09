@@ -1,12 +1,11 @@
-(ns app.modal-dialog
+(ns app.views.modal-dialog
   (:require
-    ;; icons
+    ;; material-ui react components
     [reagent-mui.material.button :refer [button]]
     [reagent-mui.material.dialog :refer [dialog]]
     [reagent-mui.material.dialog-actions :refer [dialog-actions]]
     [reagent-mui.material.dialog-content :refer [dialog-content]]
     [reagent-mui.material.dialog-title :refer [dialog-title]]
-    ;; material-ui react components
     [reagent-mui.material.text-field :refer [text-field]]
     [reagent.core :as r]))
 

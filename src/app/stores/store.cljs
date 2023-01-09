@@ -1,6 +1,6 @@
-(ns app.store
+(ns app.stores.store
   (:require
-    [app.items :refer [get-items]]
+    [app.logics.items :refer [get-items]]
     [cljs.core.async :refer [<!]]
     [reagent.core :as r])
   (:require-macros

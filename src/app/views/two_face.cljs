@@ -1,7 +1,7 @@
-(ns app.two-face
+(ns app.views.two-face
   (:require
-    [app.modal-dialog :refer [modal-dialog]]
-    [app.sesame :refer [decrypt-text]]
+    [app.logics.sesame :refer [decrypt-text]]
+    [app.views.modal-dialog :refer [modal-dialog]]
     [cljs.core.async :refer [chan <! >!]]
     ;; icons
     [reagent-mui.icons.visibility :refer [visibility]]

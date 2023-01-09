@@ -1,22 +1,22 @@
-(ns app.item-edit-dialog
+(ns app.views.item-edit-dialog
   (:require
-    [app.items :refer [put-item]]
-    [app.modal-dialog :refer [modal-dialog]]
-    [app.sesame :refer [encrypt-text]]
-    [app.store :as s]
+    [app.logics.items :refer [put-item]]
+    [app.logics.sesame :refer [encrypt-text]]
+    [app.stores.store :as s]
+    [app.views.modal-dialog :refer [modal-dialog]]
     [cljs.core.async :refer [<! >! chan]]
+    ;; icons
     [reagent-mui.icons.abc :refer [abc]]
     [reagent-mui.icons.link :refer [link]]
     [reagent-mui.icons.person :refer [person]]
     [reagent-mui.icons.save :refer [save]]
-    ;; icons
     [reagent-mui.icons.title :refer [title]]
+    ;; material-ui react components
     [reagent-mui.material.button :refer [button]]
     [reagent-mui.material.dialog :refer [dialog]]
     [reagent-mui.material.dialog-actions :refer [dialog-actions]]
     [reagent-mui.material.dialog-content :refer [dialog-content]]
     [reagent-mui.material.dialog-title :refer [dialog-title]]
-    ;; material-ui react components
     [reagent-mui.material.text-field :refer [text-field]]
     [reagent.core :as r])
   (:require-macros

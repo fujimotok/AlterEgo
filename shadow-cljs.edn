@@ -3,11 +3,6 @@
         :modules {:main {:init-fn app.core/main}}
         :output-dir "public/js"
         :target :browser}
-  :cards {:asset-path "/js"
-          :modules {:main {:init-fn app.cards/main}}
-          :compiler-options {:devcards true}
-          :output-dir "public/js"
-          :target :browser}
   :test {:ns-regexp "app.cards"
          :output-to "out/test.js"
          :target :node-test}
@@ -19,6 +14,8 @@
                 [arttuka/reagent-material-ui "5.10.1-0"]
                 [com.github.brianium/indexed.db "1.0.3"]]
  :dev-http {5000 "public"}
+ :ssl {:keystore "ssl/keystore.jks"
+       :password "localhost"}
  :nrepl {:port 3333}
  :source-paths ["src"]
  :jvm-opts ["-Xmx1G"]}

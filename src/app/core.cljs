@@ -1,7 +1,7 @@
 (ns app.core
   "This namespace contains your application and is the entrypoint for 'yarn start'."
   (:require
-    [app.body :refer [body]]
+    [app.views.body :refer [body]]
     [reagent.core :as r]))
 
 

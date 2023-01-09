@@ -1,10 +1,10 @@
-(ns app.account-list
+(ns app.views.account-list
   (:require
-    [app.item-edit-dialog :refer [item-edit-dialog-open]]
     ;; model
-    [app.items :refer [del-item]]
-    [app.store :as s]
-    [app.two-face :refer [two-face]]
+    [app.logics.items :refer [del-item]]
+    [app.stores.store :as s]
+    [app.views.item-edit-dialog :refer [item-edit-dialog-open]]
+    [app.views.two-face :refer [two-face]]
     ;; icons
     [reagent-mui.icons.abc :refer [abc]]
     [reagent-mui.icons.delete-icon :refer [delete]]
