@@ -14,11 +14,11 @@
       "type": "image/png"
     }
   ],
-  "start_url": "./?standalone=true",
+  "start_url": "./?fullscreen=true",
   "id": "./",
   "scope": "./",
   "theme_color": "transparent",
   "background_color": "transparent",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait"
 }
