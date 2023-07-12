@@ -36,7 +36,7 @@
       [accordion-details
        [:div {:style {:display "flex" :align-items "center"}}
         [link {:style {:margin "8px 16px 8px 0px"}}]
-        [:a {:href (:url item), :target "_blank"}
+        [:a {:href (:url item), :target "_blank" :style {:overflow "hidden", :white-space "nowrap", :text-overflow "ellipsis"}}
          [typography {:variant "body1"} (:url item)]]]
        [:div {:style {:display "flex" :align-items "center"}}
         [person {:style {:margin "8px 16px 8px 0px"}}]
