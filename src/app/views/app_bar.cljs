@@ -9,10 +9,10 @@
     ;; mui components
     [reagent-mui.material.app-bar :as mui-app-bar]
     [reagent-mui.material.icon-button :refer [icon-button]]
+    [reagent-mui.material.input :refer [input]]
     [reagent-mui.material.input-adornment :refer [input-adornment]]
     [reagent-mui.material.menu :refer [menu]]
     [reagent-mui.material.menu-item :refer [menu-item]]
-    [reagent-mui.material.outlined-input :refer [outlined-input]]
     [reagent-mui.material.toolbar :refer [toolbar]]
     [reagent.core :as r]))
 
@@ -36,15 +36,6 @@
     [mui-app-bar/app-bar
      {:position "fixed", :color "inherit"}
      [toolbar
-      [outlined-input
-       {:size "small",
-        :placeholder "Search...",
-        :end-adornment
-        (r/as-element
-          [input-adornment {:position "end"}
-           [icon-button {:color "inherit"}
-            [search]]]),
-        :style {:flex-grow "1"}}]
       [:div
        [icon-button
         {:aria-label "show more"
@@ -75,5 +66,16 @@
                 :type "file"
                 :accept ".json"
                 :style {:display "none" :width 0 :height 0}
-                :on-change #(on-change-input)}]]]]))
+                :on-change #(on-change-input)}]]
+      [input
+       {:size "small",
+        :placeholder "Search...",
+        :id "search",
+        :disableUnderline true,
+        :end-adornment
+        (r/as-element
+          [input-adornment {:position "end"}
+           [icon-button {:color "inherit"}
+            [search]]]),
+        :style {:flex-grow "1"}}]]]))
 

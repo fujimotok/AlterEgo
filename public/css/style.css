@@ -1,4 +1,68 @@
 body
 {
-    margin: 0px;
+    background-color: #DEE;
+}
+
+.MuiPaper-root
+{
+    background-color: #FFF !important;
+}
+
+
+@media (prefers-color-scheme: dark) {
+    body
+    {
+        background-color: #011;
+        color: #fff !important;
+    }
+
+    .MuiTypography-root
+    {
+        color: #fff;
+    }
+
+    .MuiSvgIcon-root
+    {
+        color: #fff;
+    }
+
+    .MuiInputBase-input
+    {
+        color: #fff !important;
+    }
+
+    .MuiMenuItem-root
+    {
+        color: #fff !important;
+    }
+
+    .MuiPaper-root
+    {
+        background-color: #224 !important;
+    }
+}
+
+
+.MuiAppBar-root
+{
+    width: 96% !important;
+    margin: 2%;
+    border-radius: 30px;
+    background-color: rgba(128, 128, 128, 0.5) !important; /* 背景色 */
+    border: 2px solid rgba(255, 255, 255, 0.2); /* ボーダー */
+    border-right-color: rgba(255, 255, 255, 0.1);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+    /* ぼかしエフェクト */
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 5px 20px rgba(128, 128, 128, 0.5) !important; /* 薄い影 */
+}
+
+.MuiFab-root
+{
+    background-color: rgba(128, 128, 128, 0.5) !important; /* 背景色 */
+    /* ぼかしエフェクト */
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 5px 20px rgba(128, 128, 128, 0.5) !important; /* 薄い影 */
 }
