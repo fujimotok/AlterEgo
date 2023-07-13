@@ -1,0 +1,11 @@
+{
+  "name": "Alter Ego",
+  "short_name": "AlterEgo",
+  "description": "no description",
+  "start_url": "./?standalone=true",
+  "id": "./",
+  "scope": "./",
+  "theme_color": "transparent",
+  "display": "standalone",
+  "orientation": "portrait"
+}

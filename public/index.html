@@ -6,6 +6,9 @@
     <!-- for PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style"
+          content="black-translucent">
+    
     <link
       rel="apple-touch-icon"
       type="image/png"
@@ -24,7 +27,21 @@
       sizes="16x16"
       href="icons/favicon-16x16.png"
     />
-    <link rel="manifest" href="alter-ego.webmanifest" />
+    <script>
+      function setManifest(path) {
+      const manifest = document.createElement('link');
+      manifest.rel = 'manifest';
+      manifest.href = path;
+      document.head.appendChild(manifest);
+      }
+
+      var userAgent = navigator.userAgent.toLowerCase();
+      if (userAgent.indexOf("iphone") > 0 || userAgent.indexOf("ipad") > 0) {
+      setManifest("./alter-ego-ios.webmanifest")
+      } else {
+      setManifest("./alter-ego.webmanifest")
+      }
+    </script>
     <script async
             src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.6/pwacompat.min.js"
             integrity="sha384-GOaSLecPIMCJksN83HLuYf9FToOiQ2Df0+0ntv7ey8zjUHESXhthwvq9hXAZTifA"

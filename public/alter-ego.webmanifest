@@ -17,8 +17,6 @@
   "start_url": "./?fullscreen=true",
   "id": "./",
   "scope": "./",
-  "theme_color": "transparent",
-  "background_color": "transparent",
   "display": "fullscreen",
   "orientation": "portrait"
 }
