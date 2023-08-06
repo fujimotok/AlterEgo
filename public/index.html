@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width; initial-scale=1; viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
     <!-- for PWA -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -35,12 +35,16 @@
       document.head.appendChild(manifest);
       }
 
-      var userAgent = navigator.userAgent.toLowerCase();
-      if (userAgent.indexOf("iphone") > 0 || userAgent.indexOf("ipad") > 0) {
-      setManifest("./alter-ego-ios.webmanifest")
-      } else {
-      setManifest("./alter-ego.webmanifest")
+      if (window.matchMedia
+          && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        // dark mode
+        setManifest("./alter-ego-dark.webmanifest")  
       }
+      else
+      {
+        setManifest("./alter-ego.webmanifest")  
+      }
+
     </script>
     <script async
             src="https://cdn.jsdelivr.net/npm/pwacompat@2.0.6/pwacompat.min.js"
