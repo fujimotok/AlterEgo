@@ -14,9 +14,9 @@
       "type": "image/png"
     }
   ],
-  "start_url": "./?standalone=true",
+  "start_url": "./",
   "id": "./",
-  "scope": "./",
+  "scope": ".",
   "display": "standalone",
   "theme_color": "#011",
   "background_color": "#011"
