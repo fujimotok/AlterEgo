@@ -26,7 +26,7 @@
 ;; define reagent react component
 (defn account-list
   [{:keys [items]}]
-  [list {:style {:margin-top "calc(env(safe-area-inset-top) + 80px)" :margin-bottom "80px"}}
+  [list {:style {:margin-top "calc(env(safe-area-inset-top) + 88px)" :margin-bottom "80px"}}
    (for [item items]
      ^{:key (:id item)}
      [accordion
