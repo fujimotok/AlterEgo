@@ -17,7 +17,7 @@
   "start_url": "./",
   "id": "./",
   "scope": "./",
-  "display": "standalone",
+  "display": "fullscreen",
   "theme_color": "#DEE",
   "background_color": "#DEE"
 }
