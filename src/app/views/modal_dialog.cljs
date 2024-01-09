@@ -30,7 +30,7 @@
                      :variant "standard"
                      :full-width true
                      :type "password"
-                     :value @v1
+                     :defaultValue @v1
                      :on-key-down (fn [e]
                                     (when (= "Enter" (.-key e))
                                       (.focus (.getElementById js/document "v2"))))
@@ -39,7 +39,7 @@
                      :variant "standard"
                      :full-width true
                      :type "password"
-                     :value @v2
+                     :defaultValue @v2
                      :on-key-down (fn [e]
                                     (when (= "Enter" (.-key e))
                                       (.click (.getElementById js/document "ok"))))

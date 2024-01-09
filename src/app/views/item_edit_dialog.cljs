@@ -87,28 +87,28 @@
          [title {:style {:margin "8px 16px 8px 0px"}}]
          [text-field {:variant "standard"
                       :fullWidth true
-                      :value (:title @item)
+                      :defaultValue (:title @item)
                       :onChange (fn [e] (on-change-text e :title))}]]
         [:div {:style {:display "flex" :align-items "center"}}
          [link {:style {:margin "8px 16px 8px 0px"}}]
          [text-field {:variant "standard"
                       :fullWidth true
                       :type "url"
-                      :value (:url @item)
+                      :defaultValue (:url @item)
                       :onChange (fn [e] (on-change-text e :url))}]]
         [:div {:style {:display "flex" :align-items "center"}}
          [person {:style {:margin "8px 16px 8px 0px"}}]
          [text-field {:variant "standard"
                       :fullWidth true
                       :type "url"
-                      :value (:name @item)
+                      :defaultValue (:name @item)
                       :onChange (fn [e] (on-change-text e :name))}]]
         [:div {:style {:display "flex" :align-items "center"}}
          [abc {:style {:margin "8px 16px 8px 0px"}}]
          [text-field {:variant "standard"
                       :fullWidth true
                       :type "password"
-                      :value (:val @item)
+                      :defaultValue (:val @item)
                       :onChange (fn [e] (on-change-text e :val))}]]]
        [dialog-actions
         [button {:start-icon (r/as-element [save])
