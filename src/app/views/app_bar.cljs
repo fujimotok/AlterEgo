@@ -75,7 +75,12 @@
         :end-adornment
         (r/as-element
           [input-adornment {:position "end"}
-           [icon-button {:color "inherit"}
+           [icon-button {:color "inherit"
+                         :on-click #(s/search-items @s/search-text)}
             [search]]]),
+        :defaultValue @s/search-text,
+        :on-change #(reset! s/search-text (.. % -target -value)),
+        :on-key-down #(when (= (.. % -key) "Enter")
+                         (s/search-items @s/search-text)),
         :style {:flex-grow "1"}}]]]))
 
