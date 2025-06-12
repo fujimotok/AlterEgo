@@ -1,8 +1,8 @@
 (ns app.logics.passkey
   (:require-macros
-    [cljs.core.async.macros :refer [go]])
-  (:require [cljs.core.async :refer [<!]]))
-            
+   [cljs.core.async.macros :refer [go]])
+  (:require [cljs.core.async :refer [<! chan put!]]))
+
 
 (defn create-passkey [v1 v2]
   (try
@@ -29,14 +29,18 @@
         #js {:publicKey
              #js {:challenge (.getRandomValues js/window.crypto (js/Uint8Array. 32))
                   :allowCredentials #js []}}
-        promise (.get js/navigator.credentials publicKeyCredentialRequestOptions)]    
+        promise (.get js/navigator.credentials publicKeyCredentialRequestOptions)
+        ch (chan)]
     (.then promise
-     (fn [^js credential]
-       (let [userId (-> (js/TextDecoder. "utf-8")
-                        (.decode (.. credential -response -userHandle)))
-             [v1 v2] (clojure.string/split userId #" ")]
-         (print v1 v2)
-         [v1 v2])))
+           (fn [^js credential]
+             (let [user-id (-> (js/TextDecoder. "utf-8")
+                               (.decode (.. credential -response -userHandle)))
+                   [v1 v2] (clojure.string/split user-id #" ")]
+               (go
+                 (put! ch {:v1 v1 :v2 v2})))))
     (.catch promise
-     (fn [e]
-       (print (str "Passkey 取得失敗：" (.-message e)))))))
+            (fn [e]
+              (println (str "Passkey 取得失敗：" (.-message e)))
+              (go
+                (put! ch '()))))
+    ch))

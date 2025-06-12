@@ -1,5 +1,6 @@
 (ns app.views.two-face
   (:require
+    [app.logics.passkey :refer [get-passkey]]
     [app.logics.sesame :refer [decrypt-text]]
     [app.views.modal-dialog :refer [modal-dialog]]
     [cljs.core.async :refer [chan <! >!]]
@@ -20,6 +21,24 @@
   (go
     (reset! code (<! (decrypt-text (:v1 v) (:v2 v) (str id) val)))))
 
+(defn hide
+  [visible]
+  (reset! visible false))
+
+(defn show
+  [visible modal ch id val code]
+  (go
+    (let [passkey (<! (get-passkey))]
+      (print passkey)
+      (if (empty? passkey)
+        (do
+          (reset! modal true)
+          (decode (<! ch) id val code)
+          (reset! visible true))
+        (do
+          (decode passkey id val code)
+          (reset! visible true))))))
+
 
 ;; define reagent react component
 (defn two-face
@@ -35,13 +54,12 @@
          [grid  [typography {:variant "body1"} val]])
        (if @visible
          [grid {:item true :xs 1}
-          [icon-button {:on-click #(reset! visible false)} [visibility]]]
+          [icon-button
+           {:on-click #(hide visible)}
+           [visibility]]]
          [grid {:item true :xs 1}
-          [icon-button {:on-click (fn []
-                                    (go
-                                      (reset! modal true)
-                                      (decode (<! ch) id val code)
-                                      (reset! visible true)))}
+          [icon-button
+           {:on-click #(show visible modal ch id val code)}
            [visibility-off]]])
        [modal-dialog {:open @modal
                       :on-close (fn [v1 v2]
