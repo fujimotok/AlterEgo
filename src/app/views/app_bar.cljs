@@ -1,6 +1,7 @@
 (ns app.views.app-bar
   (:require
     [app.logics.items :refer [import-items export-items]]
+    [app.logics.passkey :refer [create-passkey get-passkey]]
     [app.stores.store :as s]
     [cljs.core.async :refer [go <!]]
     ;; icons
@@ -14,11 +15,13 @@
     [reagent-mui.material.menu :refer [menu]]
     [reagent-mui.material.menu-item :refer [menu-item]]
     [reagent-mui.material.toolbar :refer [toolbar]]
-    [reagent.core :as r]))
+    [reagent.core :as r]
+    [app.views.modal-dialog :as modal]))
 
 
 ;; letの中でやるとうまくいかない
 (def data (r/atom {:anchor-el nil :open false}))
+(def show-passkey-modal (r/atom false))
 
 
 (defn- on-change-input
@@ -61,7 +64,12 @@
          {:on-click (fn []
                       (export-items)
                       (reset! data {:anchor-el nil, :open false}))}
-         "export"]]
+         "export"]
+        [menu-item
+         {:on-click (fn []
+                      (reset! show-passkey-modal true)
+                      (reset! data {:anchor-el nil, :open false}))}
+         "passkey"]]
        [:input {:id "input"
                 :type "file"
                 :accept ".json"
@@ -82,5 +90,12 @@
         :on-change #(reset! s/search-text (.. % -target -value)),
         :on-key-down #(when (= (.. % -key) "Enter")
                          (s/search-items @s/search-text)),
-        :style {:flex-grow "1"}}]]]))
+        :style {:flex-grow "1"}}]]
+      ;; dialog
+      (when @show-passkey-modal
+        [modal/modal-dialog {:open @show-passkey-modal
+                             :on-close (fn [v1 v2]
+                                         (reset! show-passkey-modal false)
+                                         (create-passkey v1 v2))}])
+      ]))
 
