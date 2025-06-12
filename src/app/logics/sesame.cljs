@@ -16,12 +16,11 @@
   "
   [val algo]
   (let [ch (chan)]
-    (.log js/console "digest")
     (.then
       (.digest (.. js/crypto -subtle)
                (clj->js {:name algo})
                val)
-      (fn [res] (go (.log js/console res) (>! ch res))))
+      (fn [res] (go (>! ch res))))
     ch))
 
 
@@ -36,7 +35,6 @@
   "
   [key format algo extract usages]
   (let [ch (chan)]
-    (.log js/console "import-key")
     (.then
       (.importKey (.. js/crypto -subtle)
                   format
@@ -44,7 +42,7 @@
                   (clj->js algo)
                   extract
                   usages)
-      (fn [res] (go (.log js/console res) (>! ch res))))
+      (fn [res] (go (>! ch res))))
     ch))
 
 
@@ -59,7 +57,6 @@
   "
   [key algo derive-algo extract usages]
   (let [ch (chan)]
-    (.log js/console "derive-key")
     (.then
       (.deriveKey (.. js/crypto -subtle)
                   (clj->js algo)
@@ -67,7 +64,7 @@
                   (clj->js derive-algo)
                   extract
                   usages)
-      (fn [res] (go (.log js/console res) (>! ch res))))
+      (fn [res] (go (>! ch res))))
     ch))
 
 
@@ -80,13 +77,12 @@
   "
   [key algo data]
   (let [ch (chan)]
-    (.log js/console "encrypt")
     (.then
       (.encrypt (.. js/crypto -subtle)
                 (clj->js algo)
                 key
                 data)
-      (fn [res] (go (.log js/console res) (>! ch res))))
+      (fn [res] (go (>! ch res))))
     ch))
 
 
@@ -99,13 +95,12 @@
   "
   [key algo data]
   (let [ch (chan)]
-    (.log js/console "decrypt")
     (.then
       (.decrypt (.. js/crypto -subtle)
                 (clj->js algo)
                 key
                 data)
-      (fn [res] (go (.log js/console res) (>! ch res))))
+      (fn [res] (go (>! ch res))))
     ch))
 
 
