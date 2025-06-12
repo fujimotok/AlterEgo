@@ -29,7 +29,6 @@
   [visible modal ch id val code]
   (go
     (let [passkey (<! (get-passkey))]
-      (print passkey)
       (if (empty? passkey)
         (do
           (reset! modal true)

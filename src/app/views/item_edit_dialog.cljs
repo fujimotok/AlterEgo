@@ -1,6 +1,7 @@
 (ns app.views.item-edit-dialog
   (:require
     [app.logics.items :refer [put-item]]
+    [app.logics.passkey :refer [get-passkey]]
     [app.logics.sesame :refer [encrypt-text]]
     [app.stores.store :as s]
     [app.views.modal-dialog :refer [modal-dialog]]
@@ -51,7 +52,7 @@
 
 
 (defn save-item
-  [v1 v2]
+  [{:keys [v1 v2]}]
   (go
     (when (not (:id @item))
       (reset! item (assoc @item :id
@@ -63,9 +64,17 @@
 
 
 (defn exec-save
-  [v]
-  (save-item (:v1 v) (:v2 v))
-  (reset! open false))
+  [open modal ch]
+  (go
+    (let [passkey (<! (get-passkey))]
+      (if (empty? passkey)
+        (do
+          (reset! modal true)
+          (save-item (<! ch))
+          (reset! open false))
+        (do
+          (save-item passkey)
+          (reset! open false))))))
 
 
 (defn on-change-text
@@ -113,10 +122,7 @@
        [dialog-actions
         [button {:start-icon (r/as-element [save])
                  :variant "contained"
-                 :on-click (fn []
-                             (go
-                               (reset! modal true)
-                               (exec-save (<! ch))))}
+                 :on-click #(exec-save open modal ch)}
          "save"]]
        [modal-dialog {:open @modal
                       :on-close (fn [v1 v2]
